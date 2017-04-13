@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/tv4"
+        android:orderInCategory="102"
+        android:title="WZYTV"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tv1"
+        android:orderInCategory="103"
+        android:title="更新token"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tv9"
+        android:orderInCategory="108"
+        android:title="自定义"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/update"
+        android:orderInCategory="109"
+        android:title="软件更新"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/feedback"
+        android:orderInCategory="111"
+        android:title="意见反馈"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/signout"
+        android:orderInCategory="112"
+        android:title="退出登录"
+        app:showAsAction="never" />
+</menu>
