@@ -200,7 +200,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     }
 
     private void playnow() {
-        if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv3.m")) {
+        if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv4.m")) {
             pingyaoUpdate();
         } else {
             vplay();
