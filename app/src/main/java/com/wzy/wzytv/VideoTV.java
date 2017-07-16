@@ -159,7 +159,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
         vv.setOnTouchListener(this);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-
+        vv.setBufferSize(512);
         url = bundle.getString("url");
         getUrl = bundle.getString("getUrl");
         tv_sources = bundle.getString("tv_sources");
@@ -201,7 +201,8 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
 
     private void playnow() {
         if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv4.m")) {
-            pingyaoUpdate();
+//            pingyaoUpdate();
+            vplay();
         } else {
             vplay();
         }
@@ -232,6 +233,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
         vv.setMediaController(new MediaController(this));
 //        vv.setVideoURI(Uri.parse(url));
         vv.requestFocus();
+
         bufferVideo();
         prepare();
 
@@ -354,13 +356,15 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
             posi++;
             url = tvListEntities.get(posi).getUrl();
             playnow();
-            return false;
+            return true;
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             posi--;
             url = tvListEntities.get(posi).getUrl();
             playnow();
-            return false;
+            return true;
+        }else {
+            return super.onKeyDown(keyCode, event);
         }
-        return super.onKeyDown(keyCode, event);
+//        return super.onKeyDown(keyCode, event);
     }
 }

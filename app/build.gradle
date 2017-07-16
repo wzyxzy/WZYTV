@@ -8,9 +8,9 @@ android {
     defaultConfig {
         applicationId "com.wzy.wzytv"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 24
         versionCode 8
-        versionName "3.2"
+        versionName "3.3"
     }
     buildTypes {
         release {
