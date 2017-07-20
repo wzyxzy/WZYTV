@@ -1,5 +1,6 @@
 package com.wzy.wzytv;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import static com.wzy.wzytv.R.id.feedback;
 import static com.wzy.wzytv.R.id.signout;
 import static com.wzy.wzytv.R.id.tv1;
@@ -61,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
 //        Intent intent = getIntent();
         SharedPreferences sharedPref = this.getSharedPreferences("infos",

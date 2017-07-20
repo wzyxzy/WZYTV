@@ -1,16 +1,23 @@
 package com.wzy.wzytv;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
@@ -31,12 +39,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Button sign_up;
     private String logUrl;
     private String download_url = "http://cnbeijing.xyz/tv/WZYTV.apk";
+    private final static int REQUEST_CODE_ASK_CALL_PHONE = 123;
+    private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
 
+    // 所需的全部权限
+    static final String[] PERMISSIONS = new String[]{
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         update();
+//        PermissionGen.with(this)
+//                .addRequestCode(100)
+//                .permissions(
+//                        Manifest.permission.WRITE_SETTINGS,
+//                        Manifest.permission.READ_EXTERNAL_STORAGE,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                        Manifest.permission.READ_PHONE_STATE)
+//                .request();
         setContentView(R.layout.activity_login);
         SharedPreferences sharedPref = this.getSharedPreferences("infos",
                 MODE_PRIVATE);
@@ -44,6 +68,67 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             signIn(sharedPref.getString("name", "wzy"), sharedPref.getString("password", "tv1.m"));
         }
         initView();
+    }
+
+    public void onCallPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            int readPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+            int readExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writeExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (readPhonePermission != PackageManager.PERMISSION_GRANTED
+                    || readExternalPermission != PackageManager.PERMISSION_GRANTED
+                    || writeExternalPermission != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_CODE_ASK_CALL_PHONE);
+                return;
+            } else {
+                requestWriteSettings();
+            }
+        } else {
+            submit();
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_CALL_PHONE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    requestWriteSettings();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(this, "请授权WZYTV后使用", Toast.LENGTH_SHORT)
+                            .show();
+                    onCallPermission();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void requestWriteSettings() {
+        Toast.makeText(getApplicationContext(), "调节亮度需要获取修改手机设置权限，请授予", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_WRITE_SETTINGS) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.System.canWrite(this)) {
+                    submit();
+                }
+            }
+        } else {
+            submit();
+        }
     }
 
     private void update() {
@@ -129,7 +214,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in:
-                submit();
+                onCallPermission();
                 break;
             case R.id.sign_up:
                 signup();
@@ -171,6 +256,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private void signIn(String nameString, String passwordString) {
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
         String DEVICE_ID = tm.getDeviceId();
         logUrl = "http://cnbeijing.xyz:8080/UserLogin?name=" + nameString + "&pass=" + passwordString + "&device_id=" + DEVICE_ID;
         RequestQueue mQueue = Volley.newRequestQueue(this);

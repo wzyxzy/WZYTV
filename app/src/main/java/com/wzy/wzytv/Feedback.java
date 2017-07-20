@@ -18,7 +18,7 @@ public class Feedback extends AppCompatActivity {
 
     private void initView() {
         webview_feedback = (WebView) findViewById(R.id.webview_feedback);
-        webview_feedback.loadUrl("http://www.wzyxzy.tk:8080/feedback.html");
+        webview_feedback.loadUrl("http://cnbeijing.xyz:8080/feedback.html");
         webview_feedback.setWebViewClient(new ExampleWebViewClient());
     }
 
