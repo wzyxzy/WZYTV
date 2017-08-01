@@ -7,8 +7,18 @@
         android:title="WZYTV"
         app:showAsAction="never" />
     <item
-        android:id="@+id/tv1"
+        android:id="@+id/tv5"
         android:orderInCategory="103"
+        android:title="WZYTV_EXO"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tv6"
+        android:orderInCategory="104"
+        android:title="WZYTV_IJK"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tv1"
+        android:orderInCategory="107"
         android:title="更新token"
         app:showAsAction="never" />
     <item

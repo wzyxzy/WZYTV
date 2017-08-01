@@ -1,6 +1,5 @@
 package com.wzy.wzytv;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -10,12 +9,12 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -23,8 +22,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.wzy.wzytv.adapters.TVAdapter;
+import com.wzy.wzytv.adapters.TVRAdapter;
 import com.wzy.wzytv.model.TVModel;
 import com.wzy.wzytv.model.TokenInfo;
 import com.wzy.wzytv.tools.AESTools;
@@ -34,20 +34,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import static com.wzy.wzytv.R.id.feedback;
 import static com.wzy.wzytv.R.id.signout;
 import static com.wzy.wzytv.R.id.tv1;
 import static com.wzy.wzytv.R.id.tv4;
+import static com.wzy.wzytv.R.id.tv5;
+import static com.wzy.wzytv.R.id.tv6;
 import static com.wzy.wzytv.R.id.tv9;
 import static com.wzy.wzytv.R.id.update;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity {
 
 
     private String url;
-    private ListView lv;
-    private TVAdapter adapter;
+    private RecyclerView lv;
+    private TVRAdapter adapter;
     //    private int level;
     private String text;
     private List<TVModel.TvListEntity> tvListEntities;
@@ -58,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String download_url = "http://cnbeijing.xyz/tv/WZYTV.apk";
     private String tv_sources;
     private String up_token;
+    private static final int VITAMIO_PLAYER_FOR_VIDEO = 0;
+    private static final int EXO_PLAYER_FOR_VIDEO = 1;
+    private static final int IJK_PLAYER_FOR_VIDEO = 2;
+    private int choose_player = VITAMIO_PLAYER_FOR_VIDEO;
 
 
     @Override
@@ -110,16 +115,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Gson gson = new Gson();
         TVModel tvModel = gson.fromJson(s, TVModel.class);
         tvListEntities = tvModel.getTv_list();
-        adapter.updateRes(tvListEntities);
+        adapter.replaceData(tvListEntities);
     }
 
 
     private void initView() {
-        lv = (ListView) findViewById(R.id.lv);
+        lv = (RecyclerView) findViewById(R.id.lv);
         tvListEntities = new ArrayList<>();
-        adapter = new TVAdapter(null, this, R.layout.item);
+        adapter = new TVRAdapter(tvListEntities);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        lv.setLayoutManager(llm);
         lv.setAdapter(adapter);
-        lv.setOnItemClickListener(this);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                url = tvListEntities.get(position).getUrl();
+                if (TextUtils.isEmpty(url)) {
+
+                    return;
+                } else {
+                    intentgo(position);
+                }
+            }
+        });
         file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/tv.txt");
         if (file.exists()) {
             CustomThread customThread = new CustomThread();
@@ -146,6 +165,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             case tv4:
                 text = "tv4.m";
+                initData();
+                break;
+            case tv5:
+                text = "tv5.m";
+                initData();
+                break;
+            case tv6:
+                text = "tv6.m";
                 initData();
                 break;
             case tv9:
@@ -315,9 +342,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void intentgo(int position) {
-
         Intent intent = new Intent();
-        intent.setClass(this, VideoTV.class);
+        switch (choose_player) {
+            case VITAMIO_PLAYER_FOR_VIDEO:
+                intent.setClass(this, VideoTV.class);
+                break;
+            case EXO_PLAYER_FOR_VIDEO:
+                intent.setClass(this, VideoViewExo.class);
+                break;
+            case IJK_PLAYER_FOR_VIDEO:
+                intent.setClass(this, VideoTV.class);
+                break;
+        }
         Bundle bundle = new Bundle();
         bundle.putString("tv_sources", tv_sources);
         bundle.putString("url", url + tv_sources);
@@ -331,13 +367,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        url = tvListEntities.get(position).getUrl();
-        if (TextUtils.isEmpty(url)) {
-            return;
-        } else {
-            intentgo(position);
-        }
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        url = tvListEntities.get(position).getUrl();
+//        if (TextUtils.isEmpty(url)) {
+//            return;
+//        } else {
+//            intentgo(position);
+//        }
+//    }
 }

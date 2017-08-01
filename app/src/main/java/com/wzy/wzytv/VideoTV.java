@@ -35,6 +35,8 @@ import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
+import static io.vov.vitamio.MediaPlayer.VIDEOCHROMA_RGB565;
+
 public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClickListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, View.OnTouchListener {
 
     private VideoView vv;
@@ -136,12 +138,15 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
 
     private void initView() {
         vv = (VideoView) findViewById(R.id.vv);
+        vv.setVideoChroma(VIDEOCHROMA_RGB565);
+        vv.setHardwareDecoder(false);
 
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;
         mScreenWidth = getResources().getDisplayMetrics().widthPixels;
+        MediaController mediaController = new MediaController(this);
 
-        vv.setMediaController(new MediaController(this));
-
+        vv.setMediaController(mediaController);
+//        vv.setVideoURI(Uri.parse("cache:/sdcard/download.mp4:" + uri));
         drawer = (LinearLayout) findViewById(R.id.drawer);
 
         dr_ly = (DrawerLayout) findViewById(R.id.dr_ly);
@@ -230,6 +235,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     private void vplay() {
 //        Toast.makeText(this, url + tv_sources, Toast.LENGTH_SHORT).show();
         vv.setVideoPath(url + tv_sources);
+//        vv.setVideoPath("cache:/sdcard/download.mp4:" + url + tv_sources);
         vv.setMediaController(new MediaController(this));
 //        vv.setVideoURI(Uri.parse(url));
         vv.requestFocus();

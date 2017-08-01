@@ -36,7 +36,11 @@
         <service
             android:name=".DownloadService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".VideoViewExo"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTop"/>
     </application>
 
 </manifest>

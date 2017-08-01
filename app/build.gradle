@@ -32,4 +32,7 @@ dependencies {
     compile 'com.github.xxl6097:okhttputils:2.4.1'
     compile 'com.google.code.gson:gson:2.7'
     compile files('libs/afinal_0.5.1_bin.jar')
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.25'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.google.android.exoplayer:exoplayer:r2.4.4'
 }

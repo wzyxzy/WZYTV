@@ -7,8 +7,13 @@
     tools:context="com.wzy.wzytv.MainActivity">
 
 
-    <ListView
+    <!--<ListView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:id="@+id/lv"/>-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/lv"/>
+        android:layout_height="match_parent" />
 </LinearLayout>
