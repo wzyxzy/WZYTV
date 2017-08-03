@@ -9,12 +9,22 @@
     <item
         android:id="@+id/tv5"
         android:orderInCategory="103"
-        android:title="WZYTV_EXO"
+        android:title="测试"
         app:showAsAction="never" />
     <item
         android:id="@+id/tv6"
         android:orderInCategory="104"
-        android:title="WZYTV_IJK"
+        android:title="乐视极速"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tv7"
+        android:orderInCategory="105"
+        android:title="乐视高清"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tv8"
+        android:orderInCategory="106"
+        android:title="辽宁有线"
         app:showAsAction="never" />
     <item
         android:id="@+id/tv1"

@@ -165,6 +165,8 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         vv.setBufferSize(512);
+//        vv.setHardwareDecoder(true);
+        vv.setVideoChroma(VIDEOCHROMA_RGB565);
         url = bundle.getString("url");
         getUrl = bundle.getString("getUrl");
         tv_sources = bundle.getString("tv_sources");
@@ -207,6 +209,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     private void playnow() {
         if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv4.m")) {
             pingyaoUpdate();
+            url = url + tv_sources;
 //            vplay();
         } else {
             vplay();
@@ -234,7 +237,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
 
     private void vplay() {
 //        Toast.makeText(this, url + tv_sources, Toast.LENGTH_SHORT).show();
-        vv.setVideoPath(url + tv_sources);
+        vv.setVideoPath(url);
 //        vv.setVideoPath("cache:/sdcard/download.mp4:" + url + tv_sources);
         vv.setMediaController(new MediaController(this));
 //        vv.setVideoURI(Uri.parse(url));
@@ -368,7 +371,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
             url = tvListEntities.get(posi).getUrl();
             playnow();
             return true;
-        }else {
+        } else {
             return super.onKeyDown(keyCode, event);
         }
 //        return super.onKeyDown(keyCode, event);

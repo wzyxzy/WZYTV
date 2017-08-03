@@ -1,5 +1,6 @@
 package com.wzy.wzytv;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -28,6 +29,7 @@ import com.wzy.wzytv.adapters.TVRAdapter;
 import com.wzy.wzytv.model.TVModel;
 import com.wzy.wzytv.model.TokenInfo;
 import com.wzy.wzytv.tools.AESTools;
+import com.wzy.wzytv.tools.RecycleViewDivider;
 import com.wzy.wzytv.tools.TextTools;
 
 import java.io.File;
@@ -40,6 +42,8 @@ import static com.wzy.wzytv.R.id.tv1;
 import static com.wzy.wzytv.R.id.tv4;
 import static com.wzy.wzytv.R.id.tv5;
 import static com.wzy.wzytv.R.id.tv6;
+import static com.wzy.wzytv.R.id.tv7;
+import static com.wzy.wzytv.R.id.tv8;
 import static com.wzy.wzytv.R.id.tv9;
 import static com.wzy.wzytv.R.id.update;
 
@@ -126,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         lv.setLayoutManager(llm);
+        lv.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.VERTICAL));
         lv.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -173,6 +178,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case tv6:
                 text = "tv6.m";
+                initData();
+                break;
+            case tv7:
+                text = "tv7.m";
+                initData();
+                break;
+            case tv8:
+                text = "tv8.m";
                 initData();
                 break;
             case tv9:
@@ -356,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Bundle bundle = new Bundle();
         bundle.putString("tv_sources", tv_sources);
-        bundle.putString("url", url + tv_sources);
+        bundle.putString("url", url);
         bundle.putInt("position", position);
         bundle.putString("getUrl", getUrl + text);
         if (text.equalsIgnoreCase("tv9.m")) {
