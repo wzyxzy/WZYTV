@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.wzy.wzytv.adapters.RecycleViewDivider;
 import com.wzy.wzytv.adapters.TVRAdapter;
 import com.wzy.wzytv.model.TVModel;
 import com.wzy.wzytv.model.TokenInfo;
@@ -125,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         lv = (RecyclerView) findViewById(R.id.lv);
+        lv.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.VERTICAL));
         tvListEntities = new ArrayList<>();
         adapter = new TVRAdapter(tvListEntities);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -151,7 +155,20 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "您的内存卡主目录中未发现\"tv.txt\"文件，请先将自定义文件放入内存卡主目录中", Toast.LENGTH_SHORT).show();
         }
-
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+// 屏幕宽度（像素）
+        int width = metric.widthPixels;
+// 屏幕高度（像素）
+        int height = metric.heightPixels;
+// 屏幕密度（1.0 / 1.5 / 2.0）
+        float density = metric.density;
+// 屏幕密度DPI（160 / 240 / 320）
+        int densityDpi = metric.densityDpi;
+        String info = "机顶盒型号: " + android.os.Build.MODEL + ",\nSDK版本:"
+                + android.os.Build.VERSION.SDK + ",\n系统版本:"
+                + android.os.Build.VERSION.RELEASE + "\n屏幕宽度（像素）: " + width + "\n屏幕高度（像素）: " + height + "\n屏幕密度:  " + density + "\n屏幕密度DPI: " + densityDpi;
+        Log.d("System INFO", info);
     }
 
     @Override
