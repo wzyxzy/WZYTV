@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -79,6 +80,8 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     private String userText;
     private String[] urls;
     private int num;
+    private MediaController mediaController;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,8 +134,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
         }
     }
 
@@ -143,7 +145,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
 
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;
         mScreenWidth = getResources().getDisplayMetrics().widthPixels;
-        MediaController mediaController = new MediaController(this);
+        mediaController = new MediaController(this);
 
         vv.setMediaController(mediaController);
 //        vv.setVideoURI(Uri.parse("cache:/sdcard/download.mp4:" + uri));
@@ -165,12 +167,13 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         vv.setBufferSize(512);
-//        vv.setHardwareDecoder(true);
-        vv.setVideoChroma(VIDEOCHROMA_RGB565);
         url = bundle.getString("url");
         getUrl = bundle.getString("getUrl");
         tv_sources = bundle.getString("tv_sources");
+        name = bundle.getString("name");
         posi = bundle.getInt("position");
+        bufferVideo();
+        prepare();
         if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv9.m")) {
             userText = bundle.getString("userText");
             gotoGson(userText);
@@ -212,15 +215,20 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
             url = url + tv_sources;
 //            vplay();
         } else {
-            vplay();
+            vv.setVideoPath(url);
+            mediaController.setFileName(name);
+
         }
+
     }
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            vplay();
+            vv.setVideoPath(url);
+            mediaController.setFileName(name);
+
             handler.postDelayed(this, 358000);
         }
     };
@@ -236,15 +244,22 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     }
 
     private void vplay() {
+        if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv4.m")) {
+            url = url + tv_sources;
+            vv.setVideoPath(url);
+//            vplay();
+        } else {
+            vv.setVideoPath(url);
+        }
+        mediaController.setFileName(name);
 //        Toast.makeText(this, url + tv_sources, Toast.LENGTH_SHORT).show();
-        vv.setVideoPath(url);
-//        vv.setVideoPath("cache:/sdcard/download.mp4:" + url + tv_sources);
-        vv.setMediaController(new MediaController(this));
-//        vv.setVideoURI(Uri.parse(url));
-        vv.requestFocus();
 
-        bufferVideo();
-        prepare();
+
+//        vv.setVideoPath("cache:/sdcard/download.mp4:" + url + tv_sources);
+//        vv.setVideoURI(Uri.parse(url));
+//        vv.requestFocus();
+
+
 
 //        vv.start();
 //        vv.setVideoLayout(VideoView.VIDEO_LAYOUT_SCALE,0);
@@ -269,18 +284,22 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         url = tvListEntities.get(position).getUrl();
-        playnow();
+        posi = position;
+        name = tvListEntities.get(posi).getTitle();
+        vplay();
+
         dr_ly.closeDrawer(drawer);
     }
 
 
     @Override
     public boolean onInfo(MediaPlayer mp, int what, int extra) {
+        Log.e("info", "what is " + what + " and extra is " + extra);
         switch (what) {
             case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-                if (vv.isPlaying()) {
-                    vv.pause();
-                }
+//                if (vv.isPlaying()) {
+//                    vv.pause();
+//                }
                 probar.setVisibility(View.VISIBLE);
                 download_rate.setText("");
                 load_rate.setText("");
@@ -297,6 +316,9 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
             case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
                 download_rate.setText("" + extra + "kb/s" + " ");
                 break;
+            default:
+                vplay();
+                break;
         }
 
         return true;
@@ -310,7 +332,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
+//        finish();
     }
 
     @Override
@@ -362,15 +384,61 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            posi++;
-            url = tvListEntities.get(posi).getUrl();
-            playnow();
-            return true;
+            if (dr_ly.isDrawerOpen(drawer)) {
+                return super.onKeyDown(keyCode, event);
+            } else {
+                posi++;
+                name = tvListEntities.get(posi).getTitle();
+                url = tvListEntities.get(posi).getUrl();
+                vplay();
+
+                return true;
+            }
+
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-            posi--;
-            url = tvListEntities.get(posi).getUrl();
-            playnow();
+            if (dr_ly.isDrawerOpen(drawer)) {
+                return super.onKeyDown(keyCode, event);
+            } else {
+                posi--;
+                name = tvListEntities.get(posi).getTitle();
+
+                url = tvListEntities.get(posi).getUrl();
+                vplay();
+                return true;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            if (dr_ly.isDrawerOpen(drawer)) {
+                return super.onKeyDown(keyCode, event);
+            } else if (vv.isPlaying()) {
+                vv.pause();
+            } else {
+                vv.start();
+            }
             return true;
+        } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (dr_ly.isDrawerOpen(drawer)) {
+                dr_ly.closeDrawer(drawer);
+                lv2.setFocusable(false);
+                vv.setFocusable(true);
+
+            } else {
+                lv2.setFocusable(true);
+                vv.setFocusable(false);
+                dr_ly.openDrawer(drawer);
+                vplay();
+
+            }
+
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (dr_ly.isDrawerOpen(drawer)) {
+                dr_ly.closeDrawer(drawer);
+                return true;
+            } else {
+                return super.onKeyDown(keyCode, event);
+            }
+//            Toast.makeText(this, "您将会推出的！！！", Toast.LENGTH_SHORT).show();
+//            return true;
         } else {
             return super.onKeyDown(keyCode, event);
         }

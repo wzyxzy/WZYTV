@@ -16,6 +16,8 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -25,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.wzy.wzytv.adapters.TVAdapter;
 import com.wzy.wzytv.adapters.TVRAdapter;
 import com.wzy.wzytv.model.TVModel;
 import com.wzy.wzytv.model.TokenInfo;
@@ -47,12 +50,12 @@ import static com.wzy.wzytv.R.id.tv8;
 import static com.wzy.wzytv.R.id.tv9;
 import static com.wzy.wzytv.R.id.update;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
 
     private String url;
-    private RecyclerView lv;
-    private TVRAdapter adapter;
+    private ListView lv;
+    private TVAdapter adapter;
     //    private int level;
     private String text;
     private List<TVModel.TvListEntity> tvListEntities;
@@ -119,31 +122,33 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         TVModel tvModel = gson.fromJson(s, TVModel.class);
         tvListEntities = tvModel.getTv_list();
-        adapter.replaceData(tvListEntities);
+        adapter.updateRes(tvListEntities);
     }
 
 
     private void initView() {
-        lv = (RecyclerView) findViewById(R.id.lv);
+        lv = (ListView) findViewById(R.id.lv);
+        lv.setOnItemClickListener(this);
         tvListEntities = new ArrayList<>();
-        adapter = new TVRAdapter(tvListEntities);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        lv.setLayoutManager(llm);
-        lv.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.VERTICAL));
+        adapter = new TVAdapter(tvListEntities,this,R.layout.item);
+//        LinearLayoutManager llm = new LinearLayoutManager(this);
+//        llm.setOrientation(LinearLayoutManager.VERTICAL);
+//        lv.setLayoutManager(llm);
+//        lv.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.VERTICAL));
         lv.setAdapter(adapter);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                url = tvListEntities.get(position).getUrl();
-                if (TextUtils.isEmpty(url)) {
 
-                    return;
-                } else {
-                    intentgo(position);
-                }
-            }
-        });
+//        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                url = tvListEntities.get(position).getUrl();
+//                if (TextUtils.isEmpty(url)) {
+//
+//                    return;
+//                } else {
+//                    intentgo(position);
+//                }
+//            }
+//        });
         file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/tv.txt");
         if (file.exists()) {
             CustomThread customThread = new CustomThread();
@@ -372,6 +377,7 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString("url", url);
         bundle.putInt("position", position);
         bundle.putString("getUrl", getUrl + text);
+        bundle.putString("name", tvListEntities.get(position).getTitle());
         if (text.equalsIgnoreCase("tv9.m")) {
             bundle.putString("userText", userText);
         }
@@ -380,13 +386,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        url = tvListEntities.get(position).getUrl();
-//        if (TextUtils.isEmpty(url)) {
-//            return;
-//        } else {
-//            intentgo(position);
-//        }
-//    }
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        url = tvListEntities.get(position).getUrl();
+        if (TextUtils.isEmpty(url)) {
+            return;
+        } else {
+            intentgo(position);
+        }
+    }
 }
