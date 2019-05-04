@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.wzy.wzytv">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -16,9 +17,15 @@
         android:icon="@mipmap/ic"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-            android:launchMode="singleTask"/>
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".VideoTV"
             android:process=":vitamio"
@@ -33,15 +40,6 @@
         </activity>
         <activity android:name=".SignUp" />
         <activity android:name=".Feedback" />
-
-        <service
-            android:name=".DownloadService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".VideoViewExo"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:launchMode="singleTop"/>
     </application>
 
 </manifest>

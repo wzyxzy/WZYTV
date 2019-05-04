@@ -174,7 +174,7 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
         posi = bundle.getInt("position");
         bufferVideo();
         prepare();
-        if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv9.m")) {
+        if (getUrl.equalsIgnoreCase("http://cnxa.top/tv/tv9.m")) {
             userText = bundle.getString("userText");
             gotoGson(userText);
         } else {
@@ -210,11 +210,14 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     }
 
     private void playnow() {
-        if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv4.m")) {
+        if (getUrl.equalsIgnoreCase("http://cnxa.top/tv/tv4.m")) {
             pingyaoUpdate();
             url = url + tv_sources;
 //            vplay();
         } else {
+            if (url.contains("wzytv.top")) {
+                url = url.replace("wzytv.top", "cnxa.top");
+            }
             vv.setVideoPath(url);
             mediaController.setFileName(name);
 
@@ -226,6 +229,9 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            if (url.contains("wzytv.top")) {
+                url = url.replace("wzytv.top", "cnxa.top");
+            }
             vv.setVideoPath(url);
             mediaController.setFileName(name);
 
@@ -244,11 +250,17 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
     }
 
     private void vplay() {
-        if (getUrl.equalsIgnoreCase("http://cnbeijing.xyz/tv/tv4.m")) {
+        if (getUrl.equalsIgnoreCase("http://cnxa.top/tv/tv4.m")) {
             url = url + tv_sources;
+            if (url.contains("wzytv.top")) {
+                url = url.replace("wzytv.top", "cnxa.top");
+            }
             vv.setVideoPath(url);
 //            vplay();
         } else {
+            if (url.contains("wzytv.top")) {
+                url = url.replace("wzytv.top", "cnxa.top");
+            }
             vv.setVideoPath(url);
         }
         mediaController.setFileName(name);
@@ -258,7 +270,6 @@ public class VideoTV extends AppCompatActivity implements AdapterView.OnItemClic
 //        vv.setVideoPath("cache:/sdcard/download.mp4:" + url + tv_sources);
 //        vv.setVideoURI(Uri.parse(url));
 //        vv.requestFocus();
-
 
 
 //        vv.start();

@@ -38,15 +38,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Button sign_in;
     private Button sign_up;
     private String logUrl;
-    private String download_url = "http://cnbeijing.xyz/tv/WZYTV.apk";
+    private String download_url = "http://cnxa.top/tv/WZYTV.apk";
     private final static int REQUEST_CODE_ASK_CALL_PHONE = 123;
     private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
 
+    private String DEVICE_ID;
     // 所需的全部权限
     static final String[] PERMISSIONS = new String[]{
             Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
     @Override
@@ -74,10 +75,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         if (Build.VERSION.SDK_INT >= 23) {
             int readPhonePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
             int readExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writeExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//            int writeExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (readPhonePermission != PackageManager.PERMISSION_GRANTED
-                    || readExternalPermission != PackageManager.PERMISSION_GRANTED
-                    || writeExternalPermission != PackageManager.PERMISSION_GRANTED) {
+                    || readExternalPermission != PackageManager.PERMISSION_GRANTED) {
+//                    || writeExternalPermission != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_CODE_ASK_CALL_PHONE);
                 return;
             } else {
@@ -111,10 +112,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void requestWriteSettings() {
-        Toast.makeText(getApplicationContext(), "调节亮度需要获取修改手机设置权限，请授予", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-        intent.setData(Uri.parse("package:" + getPackageName()));
-        startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS);
+//        Toast.makeText(getApplicationContext(), "调节亮度需要获取修改手机设置权限，请授予", Toast.LENGTH_SHORT).show();
+//        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+//        intent.setData(Uri.parse("package:" + getPackageName()));
+//        startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS);
+        submit();
+
     }
 
     @Override
@@ -133,7 +136,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private void update() {
         RequestQueue mQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest("http://cnbeijing.xyz/tv/version", new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest("http://cnxa.top/tv/version", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 check(response);
@@ -154,7 +157,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 Toast.makeText(this, "发现新版本", Toast.LENGTH_SHORT).show();
                 dialog();
 
-//                Uri uri = Uri.parse("http://cnbeijing.xyz/tv/WZYTV.apk");
+//                Uri uri = Uri.parse("http://cnxa.top/tv/WZYTV.apk");
 //                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 //                startActivity(intent);
             }
@@ -171,9 +174,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                Intent intent = new Intent(getApplicationContext(), DownloadService.class);
-                intent.putExtra("download_url", download_url);
-                startService(intent);
+//                Intent intent = new Intent(getApplicationContext(), DownloadService.class);
+//                intent.putExtra("download_url", download_url);
+//                startService(intent);
+                Uri uri = Uri.parse(download_url);
+                Intent intent1 = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent1);
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -206,6 +212,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private void gotonewlayout() {
         Intent intent = new Intent();
         intent.setClass(this, MainActivity.class);
+        intent.putExtra("device_id", DEVICE_ID);
         startActivity(intent);
         finish();
     }
@@ -257,8 +264,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private void signIn(String nameString, String passwordString) {
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
-        String DEVICE_ID = tm.getDeviceId();
-        logUrl = "http://cnbeijing.xyz:8080/UserLogin?name=" + nameString + "&pass=" + passwordString + "&device_id=" + DEVICE_ID;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        DEVICE_ID = tm.getDeviceId();
+        logUrl = "http://cnxa.top:8080/UserLogin?name=" + nameString + "&pass=" + passwordString + "&device_id=" + DEVICE_ID;
         RequestQueue mQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(logUrl, new Response.Listener<String>() {
             @Override

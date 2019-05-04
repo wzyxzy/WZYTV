@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/WZYTV.iml" filepath="$PROJECT_DIR$/WZYTV.iml" />
       <module fileurl="file://$PROJECT_DIR$/WZYonlineTV.iml" filepath="$PROJECT_DIR$/WZYonlineTV.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/floattext/floattext.iml" filepath="$PROJECT_DIR$/floattext/floattext.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sandezi/sandezi.iml" filepath="$PROJECT_DIR$/sandezi/sandezi.iml" />
       <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />
     </modules>
   </component>

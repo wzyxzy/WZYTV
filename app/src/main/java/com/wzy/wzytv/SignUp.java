@@ -90,7 +90,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         }
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String DEVICE_ID = tm.getDeviceId();
-        reUrl = "http://cnbeijing.xyz:8080/UserRegister?name=" + name + "&pass=" + password + "&email=" + email + "&device_id=" + DEVICE_ID+ "&qq=" + qq;
+        reUrl = "http://cnxa.top:8080/UserRegister?name=" + name + "&pass=" + password + "&email=" + email + "&device_id=" + DEVICE_ID+ "&qq=" + qq;
         // TODO validate success, do something
         RequestQueue mQueue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(reUrl, new Response.Listener<String>() {
